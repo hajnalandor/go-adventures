@@ -30,6 +30,7 @@ export class AppComponent {
 
   copypaste(event) {
     console.log(event.target.value);
+    this.data.eventType = 'copypaste';
     this.data.copyAndPaste = true;
     this.postService.copypaste(this.data).subscribe(() => {
     });
@@ -47,11 +48,13 @@ export class AppComponent {
     resizeTo.width = event.target.innerWidth;
     this.data.resizeFrom = this.resizeFrom;
     this.data.resizeTo = resizeTo;
+    this.data.eventType = 'resize';
     console.log(this.data);
     this.postService.resize(this.data).subscribe(()=> {});
   }
 
   sendData() {
+    this.data.eventType = 'submit';
     this.t1 = performance.now();
     this.data.formCompletionTime = this.t1 - this.t0;
     console.log(this.data);
