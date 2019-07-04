@@ -24,17 +24,20 @@ Example JSON Requests
 }
 
 {
+
   "eventType": "timeTaken",
-  "websiteUrl": "https://ravelin.com",
-  "sessionId": "123123-123123-123123123",
-  "time": 72, // seconds
+
+"websiteUrl": "https://ravelin.com",
+
+"sessionId": "123123-123123-123123123",
+
+"time": 72, // seconds
 }
 
 ...
 
 Backend (Go)
 The Backend must to:
-
 1. Create a Server
 
 2.Accept POST requests in JSON format similar to those specified above
