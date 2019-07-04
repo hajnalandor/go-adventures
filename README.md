@@ -13,9 +13,13 @@ time taken from the 1st character typed to clicking the submit button
 Example JSON Requests
 {
   "eventType": "copyAndPaste",
+  
   "websiteUrl": "https://ravelin.com",
+  
   "sessionId": "123123-123123-123123123",
+  
   "pasted": true,
+  
   "formId": "inputCardNumber"
 }
 
@@ -32,22 +36,33 @@ Backend (Go)
 The Backend must to:
 
 1. Create a Server
+
 2.Accept POST requests in JSON format similar to those specified above
+
 3.Map the JSON requests to relevant sections of the data struct (specified below)
+
 4.Print the struct for each stage of its construction
+
 5.Also print the struct when it is complete (i.e. when the form submit button has been clicked)
 
 Go Struct
 type Data struct {
+
 	WebsiteUrl         string
+        
 	SessionId          string
+        
 	ResizeFrom         Dimension
+        
 	ResizeTo           Dimension
+        
 	CopyAndPaste       map[string]bool // map[fieldId]true
+        
 	FormCompletionTime int // Seconds
 }
 
 type Dimension struct {
-	Width  string
-	Height string
+Width  string
+
+Height string
 }
