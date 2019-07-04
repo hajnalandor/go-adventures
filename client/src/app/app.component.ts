@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PostService } from './post.service';
-import { Data, Dimension } from './data';
+import { Dimension, Resize, CopyPaste, Submit } from './data';
 
 @Component({
   selector: 'app-root',
@@ -17,22 +17,27 @@ export class AppComponent {
   securityCode = '';
   t0: number;
   t1: number;
-  data = {} as Data;
+  resize = {} as Resize;
+  copyPaste = {} as CopyPaste;
+  submit = {} as Submit;
   resizeFrom = {} as Dimension;
 
 
   constructor(private postService: PostService) {
-    this.data.websiteurl = location.href.toString();
-    this.data.copyAndPaste = false;
+    this.resize.websiteurl = location.href.toString();
+    this.copyPaste.websiteurl = location.href.toString();
+    this.submit.websiteurl = location.href.toString();
+
     this.resizeFrom.height = window.innerHeight;
     this.resizeFrom.width = window.innerWidth;
   }
 
   copypaste(event) {
     console.log(event.target.value);
-    this.data.eventType = 'copypaste';
-    this.data.copyAndPaste = true;
-    this.postService.copypaste(this.data).subscribe(() => {
+    this.copyPaste.eventType = 'copyAndPaste';
+    this.copyPaste.pasted = true;
+    this.copyPaste.formId = event.target.id;
+    this.postService.copypaste(this.copyPaste).subscribe(() => {
     });
   }
 
@@ -46,19 +51,19 @@ export class AppComponent {
     const resizeTo = {} as Dimension;
     resizeTo.height = event.target.innerHeight;
     resizeTo.width = event.target.innerWidth;
-    this.data.resizeFrom = this.resizeFrom;
-    this.data.resizeTo = resizeTo;
-    this.data.eventType = 'resize';
-    console.log(this.data);
-    this.postService.resize(this.data).subscribe(()=> {});
+    this.resize.resizeFrom = this.resizeFrom;
+    this.resize.resizeTo = resizeTo;
+    this.resize.eventType = 'resize';
+    console.log(this.resize);
+    this.postService.resize(this.resize).subscribe(() => {});
   }
 
   sendData() {
-    this.data.eventType = 'submit';
+    this.submit.eventType = 'timeTaken';
     this.t1 = performance.now();
-    this.data.formCompletionTime = this.t1 - this.t0;
-    console.log(this.data);
-    this.postService.submit(this.data).subscribe(() => {
+    this.submit.time = Math.round((this.t1 - this.t0) / 1000);
+    console.log(this.submit);
+    this.postService.submit(this.submit).subscribe(() => {
     });
   }
 }
