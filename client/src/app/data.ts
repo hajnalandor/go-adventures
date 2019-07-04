@@ -1,5 +1,6 @@
 export interface Submit {
   eventType?: string;
+  sessionId: string;
   websiteurl?: string;
   time?: number;
 }

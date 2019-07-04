@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PostService } from './post.service';
 import { Dimension, Resize, CopyPaste, Submit } from './data';
-
+import * as uuid from 'uuid';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,6 +21,7 @@ export class AppComponent {
   copyPaste = {} as CopyPaste;
   submit = {} as Submit;
   resizeFrom = {} as Dimension;
+  sessionId = uuid.v4();
 
 
   constructor(private postService: PostService) {
@@ -30,6 +31,10 @@ export class AppComponent {
 
     this.resizeFrom.height = window.innerHeight;
     this.resizeFrom.width = window.innerWidth;
+    this.copyPaste.sessionId = this.sessionId;
+    this.submit.sessionId = this.sessionId;
+    this.resize.sessionId = this.sessionId;
+
   }
 
   copypaste(event) {
