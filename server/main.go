@@ -7,22 +7,22 @@ import (
 	"net/http"
 )
 
-var data Data
+var datas map[string]*Data
 
 // Data result struct
 type Data struct {
-	WebsiteURL         string
-	SessionID          string
-	ResizeFrom         Dimension
-	ResizeTo           Dimension
-	CopyAndPaste       map[string]bool // map[fieldId]true
-	FormCompletionTime int             // Seconds
+	WebsiteURL         string          `json:",omitempty"`
+	SessionID          string          `json:",omitempty"`
+	ResizeFrom         Dimension       `json:",omitempty"`
+	ResizeTo           Dimension       `json:",omitempty"`
+	CopyAndPaste       map[string]bool `json:",omitempty"`
+	FormCompletionTime int             `json:",omitempty"`
 }
 
 // Dimension of window
 type Dimension struct {
-	Width  string `json:"width"`
-	Height string `json:"height"`
+	Width  int `json:"width,omitempty"`
+	Height int `json:"height,omitempty"`
 }
 
 // RequestBody struct
@@ -38,7 +38,7 @@ type RequestBody struct {
 }
 
 func main() {
-	data.CopyAndPaste = make(map[string]bool)
+	datas = make(map[string]*Data)
 	fmt.Println("starting...")
 	fmt.Println("server listening port is 8080...")
 	fmt.Println("waiting resize,copypaste or submit action...")
@@ -56,26 +56,34 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Printf("There was an error during reading the body: %s", err)
 	}
 	var requestBody RequestBody
 	err = json.Unmarshal([]byte(body), &requestBody)
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Printf("Error during unmarshalling the body: %s", err)
 	}
+
+	_, exist := datas[requestBody.SessionID]
+	if !exist {
+		datas[requestBody.SessionID] = &Data{}
+		datas[requestBody.SessionID].CopyAndPaste = make(map[string]bool)
+	}
+
 	switch requestBody.EventType {
 	case "timeTaken":
-		submit(requestBody)
+		datas[requestBody.SessionID].submit(requestBody)
 	case "copyAndPaste":
-		copyAndPaste(requestBody)
+		datas[requestBody.SessionID].copyAndPaste(requestBody)
 	case "resize":
-		resize(requestBody)
+		datas[requestBody.SessionID].resize(requestBody)
 	}
 
-	fmt.Println(data)
+	//fmt.Println(*datas[requestBody.SessionID])
+	fmt.Printf("%+v\n", *datas[requestBody.SessionID])
 }
 
-func submit(requestBody RequestBody) {
+func (data *Data) submit(requestBody RequestBody) {
 	if requestBody.Time != 0 {
 		data.FormCompletionTime = requestBody.Time
 	}
@@ -85,21 +93,21 @@ func submit(requestBody RequestBody) {
 	if requestBody.SessionID != "" {
 		data.SessionID = requestBody.SessionID
 	}
+	hashURL(data.WebsiteURL)
 }
 
-func copyAndPaste(requestBody RequestBody) {
+func (data *Data) copyAndPaste(requestBody RequestBody) {
 	if requestBody.WebsiteURL != "" {
 		data.WebsiteURL = requestBody.WebsiteURL
 	}
 	if requestBody.SessionID != "" {
 		data.SessionID = requestBody.SessionID
 	}
-
 	data.CopyAndPaste[requestBody.FormID] = requestBody.Pasted
 
 }
 
-func resize(requestBody RequestBody) {
+func (data *Data) resize(requestBody RequestBody) {
 	if requestBody.WebsiteURL != "" {
 		data.WebsiteURL = requestBody.WebsiteURL
 	}
@@ -113,4 +121,12 @@ func resize(requestBody RequestBody) {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func hashURL(url string) {
+	hash := 0
+	for i := 0; i < len(url); i++ {
+		hash += int(url[i])
+	}
+	fmt.Println("URL hash:", hash*len(url)*31)
 }
