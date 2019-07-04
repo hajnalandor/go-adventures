@@ -69,3 +69,11 @@ Width  string
 
 Height string
 }
+
+	USAGE
+1. Run server: 
+	-cd server
+	-go run main.go
+2. Run frontend:
+	-cd client
+	-ng serve -o
