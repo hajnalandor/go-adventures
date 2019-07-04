@@ -27,14 +27,14 @@ type Dimension struct {
 
 // RequestBody struct
 type RequestBody struct {
-	EventType  string    `json:"eventType"`
-	WebsiteURL string    `json:"websiteUrl"`
-	SessionID  string    `json:"sessionId"`
-	Pasted     bool      `json:"pasted"`
-	FormID     string    `json:"formId"`
-	ResizeFrom Dimension `json:"resizeFrom"`
-	ResizeTo   Dimension `json:"resizeTo"`
-	Time       int       `json:"time"`
+	EventType  string    `json:"eventType,omitempty"`
+	WebsiteURL string    `json:"websiteUrl,omitempty"`
+	SessionID  string    `json:"sessionId,omitempty"`
+	Pasted     bool      `json:"pasted,omitempty"`
+	FormID     string    `json:"formId,omitempty"`
+	ResizeFrom Dimension `json:"resizeFrom,omitempty"`
+	ResizeTo   Dimension `json:"resizeTo,omitempty"`
+	Time       int       `json:"time,omitempty"`
 }
 
 func main() {
